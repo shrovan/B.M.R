@@ -1,146 +1,229 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Store</title>
+  <title>Dhaki Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background-color: #333;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav a {
-      color: #fff;
-      margin: 0 1rem;
-      text-decoration: none;
-    }
-    .hero {
-      background-color: #f4f4f4;
-      padding: 2rem;
-      text-align: center;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      padding: 2rem;
-    }
-    .product {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      text-align: center;
-    }
-    .product img {
-      width: 100%;
-      height: auto;
-    }
-    .about, .contact {
-      padding: 2rem;
-    }
-    .cart {
-      padding: 2rem;
-      background: #f9f9f9;
-    }
-    .cart-items {
-      list-style: none;
-      padding: 0;
-    }
-    .cart-items li {
-      padding: 0.5rem 0;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f1f1; }
+    header { background: #0d6efd; color: white; padding: 1rem; text-align: center; }
+    .product-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 1rem; margin-bottom: 1.5rem; }
+    .product-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; }
+    .btn-order { background-color: #198754; color: white; }
+    .btn-clear { background-color: #dc3545; color: white; }
+    .original-price { text-decoration: line-through; color: gray; margin-right: 5px; }
+    .offer-price { color: red; font-weight: bold; }
+    .offer-label { color: green; font-weight: bold; margin-bottom: 0; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 10px; }
+    .cart-area { background: white; padding: 1rem; border-radius: 10px; margin-top: 2rem; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding: 5px 0; }
+    .cart-controls button { margin-left: 5px; }
+    .category-filter { margin: 1rem 0; text-align: center; }
+    .category-filter button { margin: 0 5px; }
   </style>
 </head>
 <body>
   <header>
-    <h1>My Store</h1>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#shop">Shop</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#cart">Cart (<span id="cart-count">0</span>)</a>
-    </nav>
+    <h1>Dhaki Online Store</h1>
+    <p>Ethnic & Kids Wear - Delivered to Your Doorstep</p>
   </header>
 
-  <section id="home" class="hero">
-    <h2>Welcome to My Store</h2>
-    <p>Your one-stop shop for ethnic and kids clothing!</p>
-  </section>
+  <!-- Banner -->
+  <div class="container my-3">
+    <img src="https://i.postimg.cc/CK2tF931/banner.png" alt="Store Banner" class="img-fluid rounded shadow-sm">
+  </div>
 
-  <section id="shop" class="products">
-    <div class="product">
-      <img src="https://via.placeholder.com/200" alt="Product 1">
-      <h3>Kids Kurta Set</h3>
-      <p>₹999</p>
-      <button onclick="addToCart('Kids Kurta Set', 999)">Add to Cart</button>
+  <!-- Filter Buttons -->
+  <div class="container category-filter">
+    <button class="btn btn-outline-primary" onclick="filterProducts('All')">All</button>
+    <button class="btn btn-outline-success" onclick="filterProducts('Kids')">Kids</button>
+    <button class="btn btn-outline-warning" onclick="filterProducts('Saree')">Saree</button>
+    <button class="btn btn-outline-info" onclick="filterProducts('Ethnic')">Ethnic</button>
+  </div>
+
+  <!-- Product List -->
+  <div class="container my-4">
+    <div class="row" id="product-list"></div>
+
+    <!-- Cart Section -->
+    <div class="cart-area">
+      <h3>Cart Summary</h3>
+      <div id="cart-items"></div>
+      <p><strong>Total: ₹<span id="total">0</span></strong></p>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">Delivery Address</label>
+        <textarea id="address" class="form-control" rows="2" placeholder="Enter delivery address"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="coupon" class="form-label">Coupon Code (optional)</label>
+        <input id="coupon" type="text" class="form-control" placeholder="Enter coupon code">
+      </div>
+
+      <button onclick="clearCart()" class="btn btn-sm btn-clear mb-2">Clear Cart</button>
+      <button onclick="placeOrder()" class="btn btn-order w-100 mb-2">Place Order</button>
+      
     </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/200" alt="Product 2">
-      <h3>Women's Saree</h3>
-      <p>₹1499</p>
-      <button onclick="addToCart('Women\'s Saree', 1499)">Add to Cart</button>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/200" alt="Product 3">
-      <h3>Ethnic Dress</h3>
-      <p>₹1299</p>
-      <button onclick="addToCart('Ethnic Dress', 1299)">Add to Cart</button>
-    </div>
-  </section>
-
-  <section id="cart" class="cart">
-    <h2>Your Cart</h2>
-    <ul id="cart-items" class="cart-items"></ul>
-    <p>Total: ₹<span id="total">0</span></p>
-  </section>
-
-  <section id="about" class="about">
-    <h2>About Us</h2>
-    <p>We are passionate about providing high-quality ethnic and kids clothing at affordable prices. Based in Tiruppur, we aim to serve families across India.</p>
-  </section>
-
-  <section id="contact" class="contact">
-    <h2>Contact Us</h2>
-    <p>Email: example@store.com</p>
-    <p>Phone: +91 98765 43210</p>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 My Store. All rights reserved.</p>
-  </footer>
+  </div>
 
   <script>
-    const cart = [];
+    const products = [
+      { name: "Kids Kurta Set", price: 899, originalPrice: 1299, category: "Kids" },
+      { name: "Women Saree", price: 1299, originalPrice: 1799, category: "Saree" },
+      { name: "Ethnic Dress", price: 1199, originalPrice: 1599, category: "Ethnic" },
+      { name: "Warner Playground Kids T-Shirt", price: 499, originalPrice: 799, category: "Kids", image: "https://i.postimg.cc/MTRN6LW6/Chat-GPT-Image-Jun-30-2025-12-24-32-PM.png" },
+      { name: "New Ethnic Dress Combo", price: 1499, originalPrice: 1999, category: "Ethnic", image: "https://i.postimg.cc/MXBk2PDs/image.png" }
+    ];
 
-    function addToCart(name, price) {
-      cart.push({ name, price });
+    let cart = {};
+    let currentCategory = 'All';
+
+    function filterProducts(category) {
+      currentCategory = category;
+      displayProducts();
+    }
+
+    function displayProducts() {
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+      products.forEach((p, i) => {
+        if (currentCategory !== 'All' && p.category !== currentCategory) return;
+        const discount = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
+        const div = document.createElement("div");
+        div.className = "col-md-4";
+        div.innerHTML = `
+          <div class="product-card">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : ""}
+            <h5 class="mt-2">${p.name}</h5>
+            <p class="offer-label">Special Price</p>
+            <p><span class="original-price">₹${p.originalPrice}</span> <span class="offer-price">₹${p.price} (${discount}% OFF)</span></p>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-primary" onclick="addToCart(${i})">Add to Cart</button>
+              <button class="btn btn-sm btn-warning" onclick="buyNow(${i})">Buy Now</button>
+              <button class="btn btn-sm btn-outline-info" onclick="viewDetails(${i})">View Details</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function addToCart(index) {
+      const item = products[index];
+      cart[item.name] = (cart[item.name] || 0) + 1;
+      updateCart();
+    }
+
+    function changeQty(name, delta) {
+      if (cart[name]) {
+        cart[name] += delta;
+        if (cart[name] <= 0) delete cart[name];
+        updateCart();
+      }
+    }
+
+    function removeFromCart(name) {
+      delete cart[name];
+      updateCart();
+    }
+
+    function clearCart() {
+      cart = {};
       updateCart();
     }
 
     function updateCart() {
-      const cartItems = document.getElementById('cart-items');
-      const cartCount = document.getElementById('cart-count');
-      const totalElement = document.getElementById('total');
-      cartItems.innerHTML = '';
+      const cartItems = document.getElementById("cart-items");
+      const totalEl = document.getElementById("total");
+      cartItems.innerHTML = "";
       let total = 0;
 
-      cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - ₹${item.price}`;
-        cartItems.appendChild(li);
-        total += item.price;
-      });
+      for (let name in cart) {
+        const qty = cart[name];
+        const product = products.find(p => p.name === name);
+        const subtotal = qty * product.price;
+        total += subtotal;
 
-      cartCount.textContent = cart.length;
-      totalElement.textContent = total;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <div><strong>${name}</strong><br>₹${product.price} × ${qty} = ₹${subtotal}</div>
+          <div class="cart-controls">
+            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty('${name}', -1)">−</button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty('${name}', 1)">+</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${name}')">🗑</button>
+          </div>
+        `;
+        cartItems.appendChild(div);
+      }
+
+      // Apply coupon discount
+      const coupon = document.getElementById("coupon").value.trim().toUpperCase();
+      let discount = 0;
+      if (coupon === "SAVE100") {
+        discount = 100;
+      } else if (coupon === "OFF10") {
+        discount = total * 0.10;
+      } else if (coupon === "FREESHIP") {
+        discount = 50;
+      }
+
+      const finalTotal = Math.max(0, total - discount);
+      totalEl.textContent = finalTotal.toFixed(0);
     }
+
+function placeOrder() {
+      const address = document.getElementById("address").value.trim();
+      if (!address || Object.keys(cart).length === 0) {
+        alert("Please enter an address and add items to cart.");
+        return;
+      }
+
+      const productName = Object.entries(cart).map(([name, qty]) => `${name} x${qty}`).join(", ");
+      const total = document.getElementById("total").textContent;
+      const paymentMethod = "Cash on Delivery";
+
+      const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfoM0rr3xzcpDg2O17CWhK58-25Df-2l1Dv3k6bzYnnc9BptA/viewform?usp=pp_url" +
+        "&entry.516469373=" + encodeURIComponent(address) +
+        "&entry.1755887486=" + encodeURIComponent(productName) +
+        "&entry.1544041918=" + encodeURIComponent(total) +
+        "&entry.1821392497=" + encodeURIComponent(paymentMethod);
+
+      window.open(formURL, "_blank");
+    }
+
+    function placeOrderAutofill() {
+      const address = document.getElementById("address").value.trim();
+      if (!address || Object.keys(cart).length === 0) {
+        alert("Please enter an address and add items to cart.");
+        return;
+      }
+
+      const productName = Object.entries(cart).map(([name, qty]) => `${name} x${qty}`).join(", ");
+      const total = document.getElementById("total").textContent;
+      const paymentMethod = "Cash on Delivery";
+
+      const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfoM0rr3xzcpDg2O17CWhK58-25Df-2l1Dv3k6bzYnnc9BptA/viewform?usp=pp_url" +
+        "&entry.516469373=" + encodeURIComponent(address) +
+        "&entry.1755887486=" + encodeURIComponent(productName) +
+        "&entry.1544041918=" + encodeURIComponent(total) +
+        "&entry.1821392497=" + encodeURIComponent(paymentMethod);
+
+      window.open(formURL, "_blank");
+    }
+
+    function buyNow(index) {
+      addToCart(index);
+      placeOrder();
+    }
+
+    function viewDetails(index) {
+      alert("More product details coming soon! (Product: " + products[index].name + ")");
+    }
+
+    displayProducts();
   </script>
 </body>
 </html>
